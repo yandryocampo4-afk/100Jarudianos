@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>100 Jarudianos Dijeron</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+    }
+
+    /* -------- PANTALLA INICIAL -------- */
+    .start-screen {
+      background-color: #d3d3d3;
+      color: red;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .start-screen img {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .start-screen h1 {
+      font-size: 52px;
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 14px 30px;
+      font-size: 20px;
+      cursor: pointer;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin: 5px;
+    }
+
+    /* -------- PANTALLAS DE JUEGO Y FINAL -------- */
+    .game-screen,
+    .end-screen {
+      display: none;
+      background-color: white;
+      min-height: 100vh;
+      padding: 30px;
+      position: relative;
+    }
+
+    .logo-small {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 110px;
+    }
+
+    .category-title {
+      font-size: 30px;
+      color: black;
+      margin: 80px 0 20px;
+    }
+
+    .answers {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .answer {
+      background-color: #e0e0e0;
+      border: 3px solid red;
+      padding: 28px;
+      margin: 18px 0;
+      cursor: pointer;
+      font-size: 22px;
+      min-height: 40px;
+    }
+
+    .answer.revealed {
+      background-color: white;
+      color: black;
+    }
+
+    .score {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    /* -------- ERRORES -------- */
+    .errors {
+      font-size: 80px;
+      color: red;
+      margin: 10px 0 20px;
+      min-height: 90px;
+    }
+
+    .controls {
+      margin-top: 25px;
+    }
+
+    /* -------- PANTALLA FINAL -------- */
+    .end-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+    }
+
+    .end-screen h2 {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PANTALLA INICIAL -->
+  <div class="start-screen" id="startScreen">
+    <img src="logo.png" alt="Logo Empresa">
+    <h1>100 JARUDIANOS DIJERON</h1>
+    <button onclick="startGame()">Iniciar juego!</button>
+  </div>
+
+  <!-- PANTALLA DE JUEGO -->
+  <div class="game-screen" id="gameScreen">
+    <img src="logo.png" class="logo-small" alt="Logo Empresa">
+
+    <div class="category-title" id="categoryTitle"></div>
+
+    <!-- ERRORES -->
+    <div class="errors" id="errors"></div>
+
+    <div class="answers" id="answers"></div>
+
+    <div class="controls">
+      <button onclick="addError()">Incorrecto</button>
+      <button id="nextBtn" onclick="nextCategory()">Siguiente categoría</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA FINAL -->
+  <div class="end-screen" id="endScreen">
+    <img src="logo.png" class="logo-small" alt="Logo Empresa">
+    <h2>Gracias por tú excelente participación!</h2>
+    <p>Se inclusivo</p>
+    <p>Se innovador</p>
+    <p>Obtén resultados de la manera correcta</p>
+  </div>
+
+  <script>
+    const gameData = [
+      {
+        category: "1. Dígame una habilidad que ayuda a crecer profesionalmente",
+        answers: [
+          { text: "Comunicación", score: 42 },
+          { text: "Trabajo en equipo", score: 27 },
+          { text: "Liderazgo", score: 18 },
+          { text: "Adaptabilidad", score: 15 },
+          { text: "Manejo del tiempo", score: 3 }
+        ]
+      },
+      {
+        category: "2. Dígame algo que una empresa puede hacer para desarrollar a su gente",
+        answers: [
+          { text: "Dar oportunidades", score: 42 },
+          { text: "Capacitar", score: 39 },
+          { text: "Escuchar al personal", score: 12 },
+          { text: "Reconocer", score: 6 },
+          { text: "Plan de carrera", score: 6 }
+        ]
+      },
+      {
+        category: "3. Dígame algo que motiva a aprender algo nuevo",
+        answers: [
+          { text: "Mejor sueldo", score: 27 },
+          { text: "Superación personal", score: 24 },
+          { text: "Crecimiento", score: 21 },
+          { text: "Reconocimiento", score: 15 },
+          { text: "Retos nuevos", score: 15 }
+        ]
+      },
+      {
+        category: "4. Dígame algo que hace un buen líder para desarrollar talento",
+        answers: [
+          { text: "Motiva", score: 33 },
+          { text: "Escucha", score: 24 },
+          { text: "Da retroalimentación", score: 21 },
+          { text: "Predica con el ejemplo", score: 12 },
+          { text: "Reconoce", score: 10 }
+        ]
+      },
+      {
+        category: "5. Dígame algo que ayuda a retener talento en una empresa",
+        answers: [
+          { text: "Oportunidades de crecimiento", score: 37 },
+          { text: "Capacitación constante", score: 27 },
+          { text: "Buen ambiente laboral", score: 21 },
+          { text: "Liderazgo", score: 9 },
+          { text: "Reconocimiento", score: 6 }
+        ]
+      },
+      {
+        category: "6. Dígame una señal de que una persona está desarrollando su talento",
+        answers: [
+          { text: "Mejora su desempeño", score: 39 },
+          { text: "Asume retos", score: 21 },
+          { text: "Aprende cosas nuevas", score: 15 },
+          { text: "Comparte conocimientos", score: 15 },
+          { text: "Tiene iniciativa", score: 15 }
+        ]
+      },
+      {
+        category: "7. Mencione algo que una persona puede enseñar a otros",
+        answers: [
+          { text: "Conocimientos", score: 33 },
+          { text: "Experiencia", score: 27 },
+          { text: "Buenas prácticas", score: 24 },
+          { text: "Habilidades", score: 12 },
+          { text: "Actitud", score: 9 }
+        ]
+      }
+    ];
+
+    let currentCategory = 0;
+    let errorCount = 0;
+
+    function startGame() {
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("gameScreen").style.display = "block";
+      loadCategory();
+    }
+
+    function loadCategory() {
+      const data = gameData[currentCategory];
+      document.getElementById("categoryTitle").innerText = data.category;
+
+      // Reset errores
+      errorCount = 0;
+      document.getElementById("errors").innerText = "";
+
+      const answersDiv = document.getElementById("answers");
+      answersDiv.innerHTML = "";
+
+      const sortedAnswers = [...data.answers].sort((a, b) => b.score - a.score);
+
+      sortedAnswers.forEach(a => {
+        const div = document.createElement("div");
+        div.className = "answer";
+        div.innerHTML = "&nbsp;";
+
+        div.onclick = () => {
+          if (!div.classList.contains("revealed")) {
+            div.classList.add("revealed");
+            div.innerHTML = `${a.text} <span class="score">(${a.score})</span>`;
+          }
+        };
+
+        answersDiv.appendChild(div);
+      });
+
+      document.getElementById("nextBtn").innerText =
+        currentCategory === gameData.length - 1
+          ? "Finalizar juego"
+          : "Siguiente categoría";
+    }
+
+    function addError() {
+      if (errorCount < 3) {
+        errorCount++;
+        document.getElementById("errors").innerText = "X".repeat(errorCount);
+      }
+    }
+
+    function nextCategory() {
+      currentCategory++;
+      if (currentCategory < gameData.length) {
+        loadCategory();
+      } else {
+        document.getElementById("gameScreen").style.display = "none";
+        document.getElementById("endScreen").style.display = "flex";
+      }
+    }
+  </script>
+
+</body>
+</html>
